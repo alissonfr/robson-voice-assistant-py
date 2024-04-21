@@ -1,0 +1,13 @@
+{
+    "actions": [
+      {
+        "name": "tocar",
+        "objects": ["música"]
+      },
+      {
+        "name": "parar",
+        "objects": ["música"]
+      }
+    ]
+  }
+  
