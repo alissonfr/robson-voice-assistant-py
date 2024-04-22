@@ -5,22 +5,21 @@ from os import environ as env
 class NltkFacade:
     def __init__(self):
         self.stop_words = set(corpus.stopwords.words(env.get("WORDS_LANGUAGE")))
-        self.tokens = None
 
-    def generate_tokens(self, transcription):
+    def get_tokens(self, transcription):
         tokens = word_tokenize(transcription)
-        self.tokens = [token for token in tokens if token not in self.stop_words]
-        print(self.tokens)
+        tokens = [token for token in tokens if token not in self.stop_words]
+        return tokens
     
-    def is_tokens_valid(self):
-        return len(self.tokens) >= 3 and self.tokens[0] == env.get("ASSISTANT_NAME")
+    def is_tokens_valid(self, tokens):
+        return len(tokens) >= 3 and tokens[0] == env.get("ASSISTANT_NAME")
 
-    def get_action_and_params(self):
+    def get_action_and_params(self, tokens):
         actuator_actions = self.__get_config_file(env.get("CONFIG_FILE_PATH"))["actions"]
 
-        action = self.tokens[1]
-        main_param = self.tokens[2]
-        secondary_params = self.tokens[3:]
+        action = tokens[1]
+        main_param = tokens[2]
+        secondary_params = tokens[3:]
 
         for actuator_action in actuator_actions:
             if action == actuator_action["name"] and main_param in actuator_action["params"]:

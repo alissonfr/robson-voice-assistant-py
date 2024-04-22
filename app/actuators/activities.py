@@ -1,4 +1,4 @@
-from actuators.base_actuator import BaseActuator
+from .base_actuator import BaseActuator
 
 ACTIVITIES_FILE = "activities.txt"
 

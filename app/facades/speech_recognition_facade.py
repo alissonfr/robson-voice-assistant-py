@@ -9,7 +9,7 @@ class SpeechRecognitionFacade:
         with speech_recognition.Microphone() as audio_source:
             self.recognizer.adjust_for_ambient_noise(audio_source)
             print(f"{env.get('ASSISTANT_NAME')} está ouvindo...")
-            listening_time = int(env.get("LISTENING_TIME"))
+            listening_time = env.get("LISTENING_TIME")
             speech = self.recognizer.listen(audio_source, timeout=listening_time, phrase_time_limit=listening_time)
             
             return speech

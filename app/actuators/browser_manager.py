@@ -1,6 +1,6 @@
 import webbrowser
 from os import environ as env
-from actuators.base_actuator import BaseActuator
+from .base_actuator import BaseActuator
 
 GOOGLE_URL = "www.google.com.br"
 BING_URL = "www.bing.com"
