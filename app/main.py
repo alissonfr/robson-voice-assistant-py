@@ -9,18 +9,14 @@ from actuators.browser_manager import BrowserManager
 from facades.nltk_facade import NltkFacade
 from facades.speech_recognition_facade import SpeechRecognitionFacade
 
-
-
 ACTUATORS = [
     {
         "name": "activities",
         "class": Activities,
-        "parameter": None,
     },
     {
         "name": "browser_manager",
         "class": BrowserManager,
-        "parameter": None,
     }
 ]
 
@@ -33,7 +29,7 @@ class Main:
         try:
             for actuator in self.actuators:
                 actuator_instance = actuator["class"]
-                actuator["parameter"] = actuator_instance()
+                actuator_instance()
 
             self.isRunning = True
         except Exception as e:
@@ -58,9 +54,9 @@ class Main:
                     print("Comando inválido. Por favor tente novamente.")
                     continue
                 
-                action, actuator_object = nltk.get_action_and_object()
+                action, main_param, secondary_params = nltk.get_action_and_params()
 
-                self.__execute_action(self.actuators, action, actuator_object)
+                self.__execute_action(self.actuators, action, main_param, secondary_params)
             except UnknownValueError:
                 print("Erro ao processar a fala.")
             except KeyboardInterrupt:
@@ -73,11 +69,10 @@ class Main:
                 print(f"Erro ao processar comando: {str(e)}.")
                 logging.exception(str(e))
 
-    def __execute_action(self, actuators, action, actuator_object):
+    def __execute_action(self, actuators, action, main_param, secondary_params):
         for actuator in actuators:
             actuator_instance = actuator["class"]
-            parameter = actuator["parameter"]
-            process = Thread(target=actuator_instance.start, args=(actuator_instance, action, actuator_object, parameter))
+            process = Thread(target=actuator_instance.start, args=(actuator_instance, action, main_param, secondary_params))
             process.start()
 
 if __name__ == "__main__":

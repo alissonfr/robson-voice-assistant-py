@@ -6,8 +6,5 @@ class BaseActuator(ABC):
         pass
 
     @abstractmethod
-    def start(self, action, actuator_object, parameter):
+    def start(self, action, main_param, secondary_params):
         pass
-
-    def default_action():
-        print("Ação não encontrada.")

@@ -2,20 +2,20 @@
     "actions": [
       {
         "name": "abrir",
-        "objects": ["calendário", "e-mail"]
+        "params": ["calendário", "e-mail"]
       },
       {
         "name": "pesquisar",
-        "objects": ["google", "bing"]
+        "params": ["google", "bing"]
       },
 
       {
         "name": "adicionar",
-        "objects": ["atividade"]
+        "params": ["atividade"]
       },
       {
         "name": "remover",
-        "objects": ["atividade"]
+        "params": ["atividade"]
       }
     ]
   }

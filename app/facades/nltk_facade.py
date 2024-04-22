@@ -1,6 +1,6 @@
+import json
 from nltk import word_tokenize, corpus
 from os import environ as env
-from helpers.json_helper import get_config_file
 
 class NltkFacade:
     def __init__(self):
@@ -15,14 +15,20 @@ class NltkFacade:
     def is_tokens_valid(self):
         return len(self.tokens) >= 3 and self.tokens[0] == env.get("ASSISTANT_NAME")
 
-    def get_action_and_object(self):
-        actuator_actions = get_config_file(env.get("CONFIG_FILE_PATH"))["actions"]
+    def get_action_and_params(self):
+        actuator_actions = self.__get_config_file(env.get("CONFIG_FILE_PATH"))["actions"]
 
         action = self.tokens[1]
-        actuator_object = self.tokens[2]
+        main_param = self.tokens[2]
+        secondary_params = self.tokens[3:]
 
         for actuator_action in actuator_actions:
-            if action == actuator_action["name"] and actuator_object in actuator_action["objects"]:
-                return action, actuator_object
+            if action == actuator_action["name"] and main_param in actuator_action["params"]:
+                return action, main_param, secondary_params
         
         raise Exception("Nome ou objeto autuador incorreto.")
+    
+    def __get_config_file(self, path):
+        with open(path, "r", encoding="utf-8") as file:
+            config_file = json.load(file)
+            return config_file

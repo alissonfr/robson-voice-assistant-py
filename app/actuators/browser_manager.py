@@ -9,14 +9,15 @@ class BrowserManager(BaseActuator):
     def __init__(self):
         return None
 
-    def start(self, action, actuator_object, _):
-        if action == "abrir" and actuator_object == "calendário":
+    def start(self, action, main_param, _):
+
+        if action == "abrir" and main_param == "calendário":
             self.__open_browser_tab(env.get("CALENDAR_SERVICE_URL"))
-        elif action == "abrir" and actuator_object == "e-mail":
+        elif action == "abrir" and main_param == "e-mail":
             self.__open_browser_tab(env.get("EMAIL_SERVICE_URL"))
-        elif action == "pesquisar" and actuator_object == "google":
+        elif action == "pesquisar" and main_param == "google":
             self.__open_browser_tab(GOOGLE_URL)
-        elif action == "pesquisar" and actuator_object == "bing":
+        elif action == "pesquisar" and main_param == "bing":
             self.__open_browser_tab(BING_URL)
 
     def __open_browser_tab(url):
