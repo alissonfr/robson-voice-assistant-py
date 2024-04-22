@@ -1,12 +1,21 @@
 {
     "actions": [
       {
-        "name": "tocar",
-        "objects": ["música"]
+        "name": "abrir",
+        "objects": ["calendário", "e-mail"]
       },
       {
-        "name": "parar",
-        "objects": ["música"]
+        "name": "pesquisar",
+        "objects": ["google", "bing"]
+      },
+
+      {
+        "name": "adicionar",
+        "objects": ["atividade"]
+      },
+      {
+        "name": "remover",
+        "objects": ["atividade"]
       }
     ]
   }

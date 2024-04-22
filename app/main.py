@@ -1,24 +1,27 @@
-
-
-from threading import Thread
-
-from config.env import *
-from os import environ
 import logging
+from threading import Thread
+from config.env import *
+from speech_recognition.exceptions import UnknownValueError
 
-from actuators.tocador import iniciar_tocador, atuar_sobre_tocador
-from adapters.natural_language_adapter import NaturalLanguageAdapter
-from adapters.speech_recognition_adapter import SpeechRecognitionAdapter
-from helpers.json_helper import get_config_file
-from helpers.token_helper import validate_token
+from actuators.activities import Activities
+from actuators.browser_manager import BrowserManager
+
+from facades.nltk_facade import NltkFacade
+from facades.speech_recognition_facade import SpeechRecognitionFacade
+
+
 
 ACTUATORS = [
     {
-        "name": "tocador",
-        "initActuator": iniciar_tocador,
-        "actuatorParameter": None,
-        "execute": atuar_sobre_tocador,
+        "name": "activities",
+        "class": Activities,
+        "parameter": None,
     },
+    {
+        "name": "browser_manager",
+        "class": BrowserManager,
+        "parameter": None,
+    }
 ]
 
 class Main:
@@ -26,14 +29,16 @@ class Main:
         self.isRunning = False
         self.actuators = ACTUATORS
 
-    def init(self):
+    def initialize(self):
         try:
-            for atuador in self.actuators:
-                atuador["actuatorParameter"] = atuador["initActuator"]()
+            for actuator in self.actuators:
+                actuator_instance = actuator["class"]
+                actuator["parameter"] = actuator_instance()
 
             self.isRunning = True
         except Exception as e:
-            logging.exception("Erro ao iniciar o assistente!")
+            print(f"Erro ao iniciar o assistente: {str(e)}")
+            logging.exception(str(e))
 
     def execute(self):
         if not self.isRunning:
@@ -42,35 +47,40 @@ class Main:
 
         while True:
             try:
-                natural_language_client = NaturalLanguageAdapter()
-                speech_recognition_client = SpeechRecognitionAdapter()
+                nltk = NltkFacade()
+                speech_recognition = SpeechRecognitionFacade()
 
-                speech = speech_recognition_client.listen()
-                transcription = speech_recognition_client.transcribe(speech)
-                tokens = natural_language_client.obter_tokens(transcription)
-                filtered_tokens = natural_language_client.eliminar_palavras_de_parada(tokens)
+                speech = speech_recognition.listen()
+                transcription = speech_recognition.transcribe(speech) # ta sem tratamento de erro qnd nao fala nada
+                nltk.generate_tokens(transcription)
 
-                isTokenValid, action, actionObject = validate_token(
-                    filtered_tokens, 
-                    environ.get("ASSISTANT_NAME"), 
-                    get_config_file(environ.get("CONFIG_FILE_PATH"))["actions"]
-                )
+                if nltk.is_tokens_valid() is False:
+                    print("Comando inválido. Por favor tente novamente.")
+                    continue
                 
-                if isTokenValid is False:
-                    return print("Comando inválido. Por favor tente novamente.")
+                action, actuator_object = nltk.get_action_and_object()
 
-                self._execute_action(self.actuators, action, actionObject)
+                self.__execute_action(self.actuators, action, actuator_object)
+            except UnknownValueError:
+                print("Erro ao processar a fala.")
+            except KeyboardInterrupt:
+                print("Desligando assistente virtual.")
+                break
+            except OSError as e:
+                print(f"Erro de sistema operacional: {str(e)}.")
+                break
             except Exception as e:
-                logging.exception("Erro durante execução!")
+                print(f"Erro ao processar comando: {str(e)}.")
+                logging.exception(str(e))
 
-    def _execute_action(actuators, action, actionObject):
+    def __execute_action(self, actuators, action, actuator_object):
         for actuator in actuators:
-            actuatorParameter = actuator["actuatorParameter"]
-            execute = actuator["execute"]
-            process = Thread(target=execute, args=(action, actionObject, actuatorParameter))
+            actuator_instance = actuator["class"]
+            parameter = actuator["parameter"]
+            process = Thread(target=actuator_instance.start, args=(actuator_instance, action, actuator_object, parameter))
             process.start()
 
 if __name__ == "__main__":
     app = Main()
-    app.init()
+    app.initialize()
     app.execute()
