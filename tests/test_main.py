@@ -12,8 +12,6 @@ AUDIOS_FOLDER = path.join(TESTS_FOLDER, 'audios')
 SILENCE_AUDIO = path.join(AUDIOS_FOLDER, 'pessimistic\\silencio.wav') #
 WRONG_ASSISTANT_AUDIO = path.join(AUDIOS_FOLDER, 'pessimistic\\joana-abrir-calendario.wav') #
 SCHEDULE_MEETING_AUDIO = path.join(AUDIOS_FOLDER, 'pessimistic\\marcar-reuniao.wav')
-OPEN_AUDIO = path.join(AUDIOS_FOLDER, 'pessimistic\\abrir-nada.wav')
-OPEN_YOUTUBE = path.join(AUDIOS_FOLDER, 'pessimistic\\abrir-youtube.wav')
 
 # Áudios otimistas
 OPEN_CALENDAR_AUDIO = path.join(AUDIOS_FOLDER, 'optimistic\\abrir-calendario.wav')#
@@ -50,6 +48,10 @@ class TestValidations(TestBase):
         is_valid = self.transcribe_and_tokenize(SILENCE_AUDIO, "")
 
         self.assertFalse(is_valid)
+        
+    def test_invalid_action():
+        SCHEDULE_MEETING_AUDIO
+        pass
         
     @patch('speech_recognition.Recognizer.listen')
     def test_assistant_name(self, mock_listen):
