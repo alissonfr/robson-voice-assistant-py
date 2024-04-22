@@ -43,8 +43,8 @@ class Main:
 
         while True:
             try:
-                nltk = NltkFacade()
                 speech_recognition = SpeechRecognitionFacade()
+                nltk = NltkFacade()
 
                 speech = speech_recognition.listen()
                 transcription = speech_recognition.transcribe(speech) # ta sem tratamento de erro qnd nao fala nada
