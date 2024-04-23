@@ -42,6 +42,10 @@ class Activities(BaseActuator):
             self.__save_activities(self, activities)
             print(f"Atividade '{activity_name}' removida.")
 
+    def __read_activities(self):
+        activities = self.__load_activities(self)
+        print(activities)
+
     def __load_activities(self):
         try:
             with open(ACTIVITIES_FILE, "r") as file:

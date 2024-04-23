@@ -1,13 +1,19 @@
+import sys
 import logging
 from threading import Thread
-from .config.env import *
 from speech_recognition.exceptions import UnknownValueError
+from os import path
 
-from .actuators.activities import Activities
-from .actuators.browser_manager import BrowserManager
+ROOT_FOLDER = path.abspath(path.join(path.dirname(__file__), '..'))
+sys.path.append(ROOT_FOLDER)
 
-from .facades.nltk_facade import NltkFacade
-from .facades.speech_recognition_facade import SpeechRecognitionFacade
+from app.config.env import *
+
+from app.actuators.activities import Activities
+from app.actuators.browser_manager import BrowserManager
+
+from app.facades.nltk_facade import NltkFacade
+from app.facades.speech_recognition_facade import SpeechRecognitionFacade
 
 ACTUATORS = [
     {
@@ -50,14 +56,13 @@ class Main:
     def transcribe(self, speech):
         return self.speech_recognition.transcribe(speech)
     
-    def get_tokens_and_validate(self, transcription):
-        tokens = self.nltk.get_tokens(transcription)
-        if self.nltk.is_tokens_valid(tokens) is False:
-            return False, None
-        
-        return is_valid, tokens
+    def get_tokens(self, transcription):
+        return self.nltk.get_tokens(transcription)
     
-    def act(self):
+    def is_tokens_valid(self, tokens):
+        return self.nltk.is_tokens_valid(tokens)
+    
+    def act(self, tokens):
         action, main_param, secondary_params = app.nltk.get_action_and_params(tokens)
         app.__execute_action(app.actuators, action, main_param, secondary_params)
         
@@ -74,14 +79,14 @@ if __name__ == "__main__":
     while True:
         try:
             listen = app.listen()
-            transcribe = app.transcribe_and_validate(listen)
-            is_valid, tokens = app.get_tokens_and_validate(transcribe)
+            transcribe = app.transcribe(listen)
+            tokens = app.get_tokens(transcribe)
             
-            if is_valid is False:
+            if app.is_tokens_valid(tokens) is False:
                 print("Comando inválido. Por favor tente novamente.")
                 continue
             
-            app.act()
+            app.act(tokens)
         except UnknownValueError:
             print("Erro ao processar a fala.")
         except KeyboardInterrupt:
