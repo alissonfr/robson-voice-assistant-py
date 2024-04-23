@@ -8,6 +8,9 @@ class Activities(BaseActuator):
 
     def start(self, action, main_param, secondary_params):
 
+        if main_param == "atividades" and action == "ver":
+                self.__read_activities(self)
+
         if main_param == "atividade":
 
             if len(secondary_params) == 0:
