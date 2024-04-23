@@ -13,12 +13,13 @@ WRONG_ASSISTANT_AUDIO = path.join(AUDIOS_FOLDER, 'invalid_commands\\joana-abrir-
 SCHEDULE_MEETING_AUDIO = path.join(AUDIOS_FOLDER, 'invalid_commands\\marcar-reuniao.wav')
 
 # Áudios otimistas
-OPEN_CALENDAR_AUDIO = path.join(AUDIOS_FOLDER, 'command\\abrir-calendario.wav')
-OPEN_EMAIL_AUDIO = path.join(AUDIOS_FOLDER, 'command\\abrir-email.wav')
-SEARCH_GOOGLE_AUDIO = path.join(AUDIOS_FOLDER, 'command\\pesquisar-google.wav')
-SEARCH_BING_AUDIO = path.join(AUDIOS_FOLDER, 'command\\pesquisar-bing.wav')
-ADD_ATICTIVITY_AUDIO = path.join(AUDIOS_FOLDER, 'command\\adicionar-atividade-ler-livro.wav')
-REMOVE_ATICTIVITY_AUDIO = path.join(AUDIOS_FOLDER, 'command\\remover-atividade-ler-livro.wav')
+OPEN_CALENDAR_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\abrir-calendario.wav')
+OPEN_EMAIL_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\abrir-email.wav')
+SEARCH_GOOGLE_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\pesquisar-google.wav')
+SEARCH_BING_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\pesquisar-bing.wav')
+ADD_ATICTIVITY_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\adicionar-atividade-ler-livro.wav')
+REMOVE_ATICTIVITY_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\remover-atividade-ler-livro.wav')
+VIEW_ATICTIVITIES_AUDIO = path.join(AUDIOS_FOLDER, 'commands\\ver-atividades.wav')
 
 sys.path.append(ROOT_FOLDER)
 
@@ -107,6 +108,12 @@ class TestActivities(TestBase):
 
         self.assertTrue(self.app.is_tokens_valid(tokens))
         self.assertEqual(" ".join(tokens), "robson remover atividade ler livro")
+
+    def test_view_activities(self):
+        tokens = self.transcribe_and_tokenize(VIEW_ATICTIVITIES_AUDIO)
+
+        self.assertTrue(self.app.is_tokens_valid(tokens))
+        self.assertEqual(" ".join(tokens), "robson ver atividades")
 
 if __name__ == '__main__':
     test_loader = TestLoader()
